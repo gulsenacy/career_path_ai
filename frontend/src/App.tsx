@@ -1,48 +1,30 @@
-import { useEffect, useState } from "react";
+import { Navigate, Route, Routes } from "react-router-dom";
 import "./App.css";
 
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import DashboardPage from "./pages/DashboardPage";
+import GoalsPage from "./pages/GoalsPage";
+import TasksPage from "./pages/TasksPage";
+import DailyLogsPage from "./pages/DailyLogsPage";
+import AssessmentsPage from "./pages/AssessmentsPage";
+import ReportsPage from "./pages/ReportsPage";
+import ProfilePage from "./pages/ProfilePage";
+
 function App() {
-  const [message, setMessage] = useState<string>("Loading...");
-  const [error, setError] = useState<string>("");
-
-  useEffect(() => {
-    fetch("http://localhost:5176/api/health")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("API request failed");
-        }
-
-        return response.json();
-      })
-      .then((data) => {
-        setMessage(data.message);
-      })
-      .catch((err) => {
-        setError(err.message);
-        setMessage("");
-      });
-  }, []);
-
   return (
-    <main className="app-container">
-      <section className="card">
-        <p className="badge">CareerPath AI</p>
-
-        <h1>Full-Stack Connection Test</h1>
-
-        <p className="description">
-          React frontend is connected to the ASP.NET Core backend.
-        </p>
-
-        <div className="status-box">
-          {error ? (
-            <span className="error">Error: {error}</span>
-          ) : (
-            <span className="success">{message}</span>
-          )}
-        </div>
-      </section>
-    </main>
+    <Routes>
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/goals" element={<GoalsPage />} />
+      <Route path="/tasks" element={<TasksPage />} />
+      <Route path="/daily-logs" element={<DailyLogsPage />} />
+      <Route path="/assessments" element={<AssessmentsPage />} />
+      <Route path="/reports" element={<ReportsPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+    </Routes>
   );
 }
 
