@@ -16,6 +16,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddControllers();
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
@@ -44,5 +46,7 @@ app.MapGet("/api/health", () =>
         message = "CareerPath AI API is running"
     });
 });
+
+app.MapControllers();
 
 app.Run();
