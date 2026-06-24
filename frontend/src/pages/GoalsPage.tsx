@@ -1,60 +1,51 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import GoalCard from "../components/ui/GoalCard";
 
-type Goal = {
+interface Goal {
   id: number;
   title: string;
+  description?: string | null;
   category: string;
-  targetDate: string;
   status: string;
+  targetDate: string | null;
   progress: number;
-};
-
-const initialGoals: Goal[] = [
-  {
-    id: 1,
-    title: "Improve React fundamentals",
-    category: "Technical Skills",
-    targetDate: "2026-07-05",
-    status: "In Progress",
-    progress: 35,
-  },
-  {
-    id: 2,
-    title: "Practice SQL queries",
-    category: "Database",
-    targetDate: "2026-07-12",
-    status: "In Progress",
-    progress: 20,
-  },
-];
+  createdAt: string;
+  updatedAt?: string | null;
+}
 
 function GoalsPage() {
-  const [goals, setGoals] = useState<Goal[]>(initialGoals);
+  const [goals, setGoals] = useState<Goal[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("Technical Skills");
   const [targetDate, setTargetDate] = useState("");
 
+  const fetchGoals = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const response = await fetch("http://localhost:5176/api/goals");
+      if (!response.ok) {
+        throw new Error(`Failed to fetch goals (HTTP ${response.status})`);
+      }
+      const data = await response.json();
+      setGoals(data);
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred while fetching goals.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchGoals();
+  }, []);
+
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
-    if (!title.trim()) {
-      return;
-    }
-
-    const newGoal: Goal = {
-      id: Date.now(),
-      title,
-      category,
-      targetDate,
-      status: "In Progress",
-      progress: 0,
-    };
-
-    setGoals([newGoal, ...goals]);
-    setTitle("");
-    setCategory("Technical Skills");
-    setTargetDate("");
+    // Do not add goals locally or to backend (GET-only)
   };
 
   return (
@@ -107,19 +98,41 @@ function GoalsPage() {
               />
             </div>
 
-            <button type="submit" className="primary-button">
-              Add Goal
+            <button type="submit" className="primary-button" disabled>
+              Add Goal (Disabled)
             </button>
           </form>
         </section>
 
         <section className="goals-list">
-          {goals.map((goal) => (
+          {isLoading && (
+            <div className="goals-loading">
+              <div className="spinner"></div>
+              <p>Loading goals...</p>
+            </div>
+          )}
+
+          {error && (
+            <div className="goals-error">
+              <p>{error}</p>
+              <button type="button" onClick={fetchGoals} className="retry-button">
+                Retry
+              </button>
+            </div>
+          )}
+
+          {!isLoading && !error && goals.length === 0 && (
+            <div className="goals-empty">
+              <p>No goals found. Define some goals in your career path!</p>
+            </div>
+          )}
+
+          {!isLoading && !error && goals.map((goal) => (
             <GoalCard
               key={goal.id}
               title={goal.title}
               category={goal.category}
-              targetDate={goal.targetDate}
+              targetDate={goal.targetDate ? goal.targetDate.split("T")[0] : ""}
               status={goal.status}
               progress={goal.progress}
             />

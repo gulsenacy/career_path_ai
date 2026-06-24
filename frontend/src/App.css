@@ -574,3 +574,59 @@
   border-radius: 999px;
   background: #4f46e5;
 }
+
+/* Loading, Error, and Empty state styles for Goals */
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #e5e7eb;
+  border-top-color: #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 12px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.goals-loading, .goals-error, .goals-empty {
+  text-align: center;
+  padding: 40px;
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.goals-loading p, .goals-error p, .goals-empty p {
+  margin: 0;
+  font-size: 15px;
+  color: #4b5563;
+}
+
+.goals-error {
+  border-color: #fecaca;
+}
+
+.goals-error p {
+  color: #dc2626;
+  margin-bottom: 16px;
+}
+
+.retry-button {
+  height: 38px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 8px;
+  background: #dc2626;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+  background: #b91c1c;
+}
